@@ -8,6 +8,8 @@ main_menu = ["Lookup Company by Stock Symbol", "Find Company by Name", "Find Com
 
 
 def main():
+    stocklist = getJsonList()
+
     datamodel = ('symbol', 'name', 'sector', 'popular')
     menumodel = 0
     run = True
@@ -18,6 +20,26 @@ def main():
         ui = userinput(menumodel)
     return 0
 
+
+def getJsonList():
+    stocklist = []
+
+    # get current working dir
+    cwd = os.getcwd()
+    # path join for correct folder
+    cwdn = os.path.join(cwd + './companies')
+
+    # next will only search starting dir
+    getjson = [next(os.walk(cwdn))]
+
+    for root, directory, files in getjson:
+        for filename in files:
+            if filename.endswith(".json"):
+                # slice notation to handle removal or ext
+                filename = filename[:-5]
+                stocklist.append(filename)
+    print(stocklist)
+    return stocklist
 
 # Menu creation model to work with all possible variations.
 def menu(menumodel, menuopts=None):
