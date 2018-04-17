@@ -2,6 +2,7 @@ import sys
 import json
 import os
 
+# Static Variables
 menu_header = ["Main Menu", "Companies matching search", "Available Sectors:"]
 menu_footer = ["  Q:  Exit/Quit", "  M:  Go back to main menu", "  M:  Go back to main menu"]
 main_menu = ["Lookup Company by Stock Symbol", "Find Company by Name", "Find Company by Sector", "Popular Companies"]
@@ -9,7 +10,13 @@ company_info = ["Company Name: ", "Stock Symbol: ", "Description: ", "CEO: ", "W
 
 
 def main():
-    stocklist = getjsonlist()
+    stocklist = getstocklist()
+
+
+# dic = {"abc": ["stuff", "stuff"]}
+# Libraries for data should be a full with the stock symbol as a key
+# Company Name (Key) with Stock Symbol as secondary
+# Sectors (Key) with Company Names as lists
 
     datamodel = ('symbol', 'name', 'sector', 'popular')
     menumodel = 0
@@ -23,7 +30,7 @@ def main():
 
 
 # creates file list to search though for
-def getjsonlist():
+def getstocklist():
     stocklist = []
 
     # get current working dir
@@ -40,7 +47,6 @@ def getjsonlist():
                 # slice notation to handle removal of .ext
                 filename = filename[:-5]
                 stocklist.append(filename)
-    print(stocklist)
     return stocklist
 
 
