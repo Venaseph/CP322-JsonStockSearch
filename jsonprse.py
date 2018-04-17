@@ -8,17 +8,20 @@ menu_footer = ["  Q:  Exit/Quit", "  M:  Go back to main menu", "  M:  Go back t
 main_menu = ["Lookup Company by Stock Symbol", "Find Company by Name", "Find Company by Sector", "Popular Companies"]
 company_info = ["Company Name: ", "Stock Symbol: ", "Description: ", "CEO: ", "Website: "]
 
+# Empty Global Dictonaries
+symbollist = {}
+namelist = {}
+
 
 def main():
-    stocklist = getstocklist()
+    cwd = getcwd()
+    makedicts(cwd)
+    for k, v in symbollist.items():
+        print("%s: %s" % (k, v))
 
-
-# dic = {"abc": ["stuff", "stuff"]}
-# Libraries for data should be a full with the stock symbol as a key
 # Company Name (Key) with Stock Symbol as secondary
 # Sectors (Key) with Company Names as lists
 
-    datamodel = ('symbol', 'name', 'sector', 'popular')
     menumodel = 0
     run = True
     while run:
@@ -29,25 +32,29 @@ def main():
     return 0
 
 
-# creates file list to search though for
-def getstocklist():
-    stocklist = []
-
+def getcwd():
     # get current working dir
     cwd = os.getcwd()
     # path join for correct folder
-    cwdn = os.path.join(cwd + './companies')
+    cwd = os.path.join(cwd + '\companies')
+    return cwd
+
+
+# creates file list to search though for
+def makedicts(cwd):
+    global symbollist, namelist
 
     # next will only search starting dir
-    getjson = [next(os.walk(cwdn))]
+    getjson = [next(os.walk(cwd))]
 
     for root, directory, files in getjson:
         for filename in files:
-            if filename.endswith(".json"):
+            if filename.count(".") == 1:
                 # slice notation to handle removal of .ext
-                filename = filename[:-5]
-                stocklist.append(filename)
-    return stocklist
+                # filename = filename[:-5]
+                filejson = json.load(open(os.path.join(root, filename)))
+                symbollist.update({filejson['symbol']: filejson})
+                namelist.update({filejson['companyName']: filejson['symbol']})
 
 
 # Menu creation model to work with all possible variations.
