@@ -5,10 +5,11 @@ import os
 menu_header = ["Main Menu", "Companies matching search", "Available Sectors:"]
 menu_footer = ["  Q:  Exit/Quit", "  M:  Go back to main menu", "  M:  Go back to main menu"]
 main_menu = ["Lookup Company by Stock Symbol", "Find Company by Name", "Find Company by Sector", "Popular Companies"]
+company_info = ["Company Name: ", "Stock Symbol: ", "Description: ", "CEO: ", "Website: "]
 
 
 def main():
-    stocklist = getJsonList()
+    stocklist = getjsonlist()
 
     datamodel = ('symbol', 'name', 'sector', 'popular')
     menumodel = 0
@@ -21,7 +22,8 @@ def main():
     return 0
 
 
-def getJsonList():
+# creates file list to search though for
+def getjsonlist():
     stocklist = []
 
     # get current working dir
@@ -35,11 +37,12 @@ def getJsonList():
     for root, directory, files in getjson:
         for filename in files:
             if filename.endswith(".json"):
-                # slice notation to handle removal or ext
+                # slice notation to handle removal of .ext
                 filename = filename[:-5]
                 stocklist.append(filename)
     print(stocklist)
     return stocklist
+
 
 # Menu creation model to work with all possible variations.
 def menu(menumodel, menuopts=None):
