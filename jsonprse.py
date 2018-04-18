@@ -1,6 +1,7 @@
 import sys
 import json
 import os
+from collections import defaultdict
 
 # Static Variables
 menu_header = ["Main Menu", "Companies matching search", "Available Sectors:"]
@@ -9,14 +10,16 @@ main_menu = ["Lookup Company by Stock Symbol", "Find Company by Name", "Find Com
 company_info = ["Company Name: ", "Stock Symbol: ", "Description: ", "CEO: ", "Website: "]
 
 # Empty Global Dictonaries
-symbollist = {}
-namelist = {}
+symboldict = {}
+namedict = {}
+sectordict = {}
+populardict = {}
 
 
 def main():
     cwd = getcwd()
     makedicts(cwd)
-    for k, v in symbollist.items():
+    for k, v in populardict.items():
         print("%s: %s" % (k, v))
 
 # Company Name (Key) with Stock Symbol as secondary
@@ -42,7 +45,10 @@ def getcwd():
 
 # creates file list to search though for
 def makedicts(cwd):
-    global symbollist, namelist
+    global symboldict, namedict, sectordict
+
+    from collections import defaultdict
+    holder = defaultdict(list)
 
     # next will only search starting dir
     getjson = [next(os.walk(cwd))]
@@ -50,11 +56,19 @@ def makedicts(cwd):
     for root, directory, files in getjson:
         for filename in files:
             if filename.count(".") == 1:
-                # slice notation to handle removal of .ext
-                # filename = filename[:-5]
+                # grab json contents
                 filejson = json.load(open(os.path.join(root, filename)))
-                symbollist.update({filejson['symbol']: filejson})
-                namelist.update({filejson['companyName']: filejson['symbol']})
+                # update symbol key dict
+                symboldict.update({filejson['symbol']: filejson})
+                # update name key dict
+                namedict.update({filejson['companyName']: filejson['symbol']})
+                # Update popular key dict
+                populardict.update({filejson['symbol']: 0})
+                # update sector key dict as well as list internal lists
+                if filejson['sector'] is not None and filejson['sector'] is not '':
+                    for sector, companyName in sectordict:
+                        holder[filejson['sector']].append((filejson['companyName']))
+    print(sectordict)
 
 
 # Menu creation model to work with all possible variations.
