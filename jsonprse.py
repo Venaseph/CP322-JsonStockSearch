@@ -4,10 +4,11 @@ import os
 
 
 # Static Variables
-menu_header = ["Main Menu", "Companies matching search", "Available Sectors:", "Most Popular Companies"]
+menu_header = ["Main Menu", "", "Companies matching search", "Available Sectors:", "Most Popular Companies"]
 menu_footer = ["  Q:  Exit/Quit", "  M:  Go back to main menu"]
 main_menu = ["Lookup Company by Stock Symbol", "Find Company by Name", "Find Company by Sector", "Popular Companies"]
 company_info = ["Company Name: ", "Stock Symbol: ", "Description: ", "CEO: ", "Website: "]
+gather_term = ["Enter your choice:  ", "Enter your symbol:  ", "Enter your company:  ", "Enter your sector:  "]
 
 
 # Empty Global Dictonaries
@@ -15,25 +16,23 @@ symboldict = {}
 namedict = {}
 sectordict = {}
 populardict = {}
-currentmenu = {}
-
+ui = None
+menumodel = 0
 
 def main():
 
     cwd = getcwd()
     makedicts(cwd)
 
-    menumodel = 0
-
     while True:
+        global ui
         header(menumodel)
-        menu(menumodel)
-        footer(menumodel)
-        ui = userinput()
+        currentmenu = menu(menumodel)
+        currentmenu = footer(menumodel, currentmenu)
+        ui = userinput(currentmenu)
         if ui is not None:
             menucontrol(ui)
         clearconsole()
-        currentmenu.clear()
 
 
 def menucontrol(ui):
@@ -52,21 +51,31 @@ def menucontrol(ui):
 
 
 def lookup():
-    global currentmenu
+    global menumodel, populardict
+    menumodel = 1
     currentmenu = symboldict
-    ui = userinput()
-    if ui is not None:
-        print(company_info[0] + ": " + currentmenu[ui]['companyName'])
-        print(company_info[1] + ": " + currentmenu[ui]['symbol'])
-        print(company_info[2] + ": " + currentmenu[ui]['description'])
-        print(company_info[1] + ": " + currentmenu[ui]['CEO'])
-        print(company_info[1] + ": " + currentmenu[ui]['website'])
-        stop = input("Press any key to contiunue:")
+    ui = None
+    while ui is None:
+        ui = userinput(currentmenu, menumodel)
+        if ui is not None:
+            print(company_info[0] + ": " + currentmenu[ui]['companyName'])
+            print(company_info[1] + ": " + currentmenu[ui]['symbol'])
+            print(company_info[2] + ": " + currentmenu[ui]['description'])
+            print(company_info[1] + ": " + currentmenu[ui]['CEO'])
+            print(company_info[1] + ": " + currentmenu[ui]['website'])
+            stop = input("Press any key to contiunue:")
+            # increment times read value for poopular
+            populardict[ui] += 1
+            print(populardict[ui])
 
 
 def byname():
-    print("")
-
+    menumodel = 2
+    currentmenu = namedict
+    ui = userinput(currentmenu, menumodel)
+    if ui is not None:
+        print("woot")
+        stop = input("Press any key to contiunue:")
 
 def bysector():
     print("bysector")
@@ -80,8 +89,9 @@ def exitquit():
     sys.exit(0)
 
 
-def userinput():
-    ui = input("Enter your choice:   ")
+def userinput(currentmenu, menumodel=0):
+    currentmenu = currentmenu
+    ui = input(gather_term[menumodel])
     clearconsole()
     if ui in currentmenu:
         return ui
@@ -95,8 +105,7 @@ def header(menumodel):
     print(menu_header[menumodel])
 
 
-def footer(menumodel):
-    global currentmenu
+def footer(menumodel, currentmenu):
     if menumodel == 0:
         print(menu_footer[menumodel])
         currentmenu.update({"Q": ""})
@@ -104,15 +113,18 @@ def footer(menumodel):
         print(menu_footer[1])
         currentmenu.update({"M": ""})
 
+    return currentmenu
+
 
 # Menu creation model to work with all possible variations.
 def menu(menumodel, menuopts=None):
-    global currentmenu
+    currentmenu = {}
+
     # Went with enumerate since index variables are non-pythonic, but wanted to generate the menu values on the fly
     for index, opt in enumerate(menuopts if menuopts else main_menu):
         print("  " + str(index + 1) + ":  " + opt)
         currentmenu.update({str(index + 1): opt})
-
+    return currentmenu
 
 def getcwd():
     # get current working dir
@@ -141,7 +153,7 @@ def makedicts(cwd):
                 filejson = json.load(open(os.path.join(root, filename)))
                 # update symbol key dict
                 symboldict.update({filejson['symbol']: filejson})
-                # update name key dict
+                # update name key dict and namelist
                 namedict.update({filejson['companyName']: filejson['symbol']})
                 # Update popular key dict
                 populardict.update({filejson['symbol']: 0})
