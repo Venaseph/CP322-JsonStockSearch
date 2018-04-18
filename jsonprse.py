@@ -77,6 +77,7 @@ def byname():
     currentmenu = namedict
     ui = input(gather_term[menumodel])
     searchlist = search(currentmenu)
+    header(menumodel)
     currentmenu = menu(menumodel, searchlist)
     currentmenu = footer(menumodel, currentmenu)
     ui = None
@@ -98,14 +99,21 @@ def byname():
 def search(currentmenu):
     searchlist = []
     for key, value in currentmenu.items():
-        num = 1
         if ui.lower() in str(key).lower():
             searchlist.append(key)
     return searchlist
 
 
 def bysector():
-    print("bysector")
+    menumodel = 3
+    searchlist = []
+    header(menumodel)
+    currentmenu = sectordict
+    for key, value in currentmenu.items():
+        searchlist.append(key)
+    currentmenu = menu(menumodel, searchlist)
+    currentmenu = footer(menumodel, currentmenu)
+
 
 
 def bypopular():
