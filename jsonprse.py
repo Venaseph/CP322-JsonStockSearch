@@ -19,11 +19,6 @@ populardict = {}
 def main():
     cwd = getcwd()
     makedicts(cwd)
-    for k, v in sectordict.items():
-        print("%s: %s" % (k, v))
-
-# Company Name (Key) with Stock Symbol as secondary
-# Sectors (Key) with Company Names as lists
 
     menumodel = 0
     run = True
@@ -47,6 +42,7 @@ def getcwd():
 def makedicts(cwd):
     global symboldict, namedict, sectordict
 
+    #explain case use below
     from collections import defaultdict
     holder = defaultdict(list)
 
@@ -64,7 +60,9 @@ def makedicts(cwd):
                 namedict.update({filejson['companyName']: filejson['symbol']})
                 # Update popular key dict
                 populardict.update({filejson['symbol']: 0})
-                # update sector key dict as well as list internal lists
+                # update sector key dict as well as list internal lists using defaultdict. Default dict supports an
+                # additional argument at init: a function. If a key is attempted to be accessed with no value, the
+                # the function is called with no arguments and return is default for the key.
                 if filejson['sector'] is not None and filejson['sector'] is not '':
                     holder[filejson['sector']].append(filejson['companyName'])
     sectordict = holder
