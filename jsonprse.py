@@ -57,6 +57,8 @@ def lookup():
     ui = None
     while ui is None:
         ui = userinput(currentmenu, menumodel)
+        if ui is 'M':
+            return
         if ui is not None:
             print(company_info[0] + ": " + currentmenu[ui]['companyName'])
             print(company_info[1] + ": " + currentmenu[ui]['symbol'])
@@ -70,12 +72,37 @@ def lookup():
 
 
 def byname():
+    global ui
     menumodel = 2
     currentmenu = namedict
-    ui = userinput(currentmenu, menumodel)
-    if ui is not None:
-        print("woot")
-        stop = input("Press any key to contiunue:")
+    ui = input(gather_term[menumodel])
+    searchlist = search(currentmenu)
+    currentmenu = menu(menumodel, searchlist)
+    currentmenu = footer(menumodel, currentmenu)
+    ui = None
+    while ui is None:
+        ui = userinput(currentmenu, menumodel)
+        if ui is 'M':
+            return
+        if ui is not None:
+            name = currentmenu[ui]
+            sybm = namedict[name]
+            print(company_info[0] + ": " + symboldict[sybm]['companyName'])
+            print(company_info[1] + ": " + symboldict[sybm]['symbol'])
+            print(company_info[2] + ": " + symboldict[sybm]['description'])
+            print(company_info[3] + ": " + symboldict[sybm]['CEO'])
+            print(company_info[4] + ": " + symboldict[sybm]['website'])
+            stop = input("Press any key to contiunue:")
+        clearconsole()
+
+def search(currentmenu):
+    searchlist = []
+    for key, value in currentmenu.items():
+        num = 1
+        if ui.lower() in str(key).lower():
+            searchlist.append(key)
+    return searchlist
+
 
 def bysector():
     print("bysector")
