@@ -34,28 +34,28 @@ def main():
     return 0
 
 
-def menucontrol(ui, switcher=None):
-    if switcher is None:
-        switcher = {
-            '1': lookup,
-            '2': byname,
-            '3': bysector,
-            '4': bypopular,
-            'Q': exitquit
-        }
+def menucontrol(ui):
+    switcher = {
+        '1': lookup,
+        '2': byname,
+        '3': bysector,
+        '4': bypopular,
+        'Q': exitquit
+    }
 
-        # get function name
-        process = switcher.get(ui)
-        # execute correct function
-        process()
-    return
+    # get function name
+    process = switcher.get(ui)
+    # execute correct function
+    process()
+
 
 def lookup():
     currentmenu = symboldict
     for k, v in currentmenu.items():
         print("%s: %s" % (k, v))
     ui = userinput()
-    print(company_info[0] + ": " + currentmenu[ui.casefold()])
+    print(company_info[0] + ": " + currentmenu[ui])
+
 
 def byname():
     print("byname")
@@ -76,11 +76,11 @@ def exitquit():
 def userinput():
     choice = input("Enter your choice:   ")
     clearconsole()
-    if choice in currentmenu:
-        return choice
-    else:
+    if choice not in currentmenu:
         print("Invalid selection, try again:")
         userinput()
+
+    return choice
 
 
 def header(menumodel):
