@@ -19,6 +19,7 @@ currentmenu = {}
 
 
 def main():
+
     cwd = getcwd()
     makedicts(cwd)
 
@@ -29,9 +30,10 @@ def main():
         menu(menumodel)
         footer(menumodel)
         ui = userinput()
-        menucontrol(ui)
-
-    return 0
+        if ui is not None:
+            menucontrol(ui)
+        clearconsole()
+        currentmenu.clear()
 
 
 def menucontrol(ui):
@@ -50,15 +52,20 @@ def menucontrol(ui):
 
 
 def lookup():
+    global currentmenu
     currentmenu = symboldict
-    for k, v in currentmenu.items():
-        print("%s: %s" % (k, v))
     ui = userinput()
-    print(company_info[0] + ": " + currentmenu[ui])
+    if ui is not None:
+        print(company_info[0] + ": " + currentmenu[ui]['companyName'])
+        print(company_info[1] + ": " + currentmenu[ui]['symbol'])
+        print(company_info[2] + ": " + currentmenu[ui]['description'])
+        print(company_info[1] + ": " + currentmenu[ui]['CEO'])
+        print(company_info[1] + ": " + currentmenu[ui]['website'])
+        stop = input("Press any key to contiunue:")
 
 
 def byname():
-    print("byname")
+    print("")
 
 
 def bysector():
@@ -74,13 +81,14 @@ def exitquit():
 
 
 def userinput():
-    choice = input("Enter your choice:   ")
+    ui = input("Enter your choice:   ")
     clearconsole()
-    if choice not in currentmenu:
+    if ui in currentmenu:
+        return ui
+    else:
         print("Invalid selection, try again:")
-        userinput()
-
-    return choice
+        ui = None
+        return ui
 
 
 def header(menumodel):
@@ -88,6 +96,7 @@ def header(menumodel):
 
 
 def footer(menumodel):
+    global currentmenu
     if menumodel == 0:
         print(menu_footer[menumodel])
         currentmenu.update({"Q": ""})
@@ -98,7 +107,7 @@ def footer(menumodel):
 
 # Menu creation model to work with all possible variations.
 def menu(menumodel, menuopts=None):
-    currentmenu.clear()
+    global currentmenu
     # Went with enumerate since index variables are non-pythonic, but wanted to generate the menu values on the fly
     for index, opt in enumerate(menuopts if menuopts else main_menu):
         print("  " + str(index + 1) + ":  " + opt)
