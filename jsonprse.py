@@ -19,7 +19,7 @@ populardict = {}
 def main():
     cwd = getcwd()
     makedicts(cwd)
-    for k, v in populardict.items():
+    for k, v in sectordict.items():
         print("%s: %s" % (k, v))
 
 # Company Name (Key) with Stock Symbol as secondary
@@ -66,9 +66,8 @@ def makedicts(cwd):
                 populardict.update({filejson['symbol']: 0})
                 # update sector key dict as well as list internal lists
                 if filejson['sector'] is not None and filejson['sector'] is not '':
-                    for sector, companyName in sectordict:
-                        holder[filejson['sector']].append((filejson['companyName']))
-    print(sectordict)
+                    holder[filejson['sector']].append(filejson['companyName'])
+    sectordict = holder
 
 
 # Menu creation model to work with all possible variations.
